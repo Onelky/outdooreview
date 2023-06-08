@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "target": "es2016",
+        "module": "commonjs" /* Specify what module code is generated. */,
+        "outDir": "./dist",
+        "baseUrl": "./",
+        "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */,
+        "forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports. */,
+        "strict": true /* Enable all strict type-checking options. */,
+        "strictFunctionTypes": true /* When assigning functions, check to ensure parameters and the return values are subtype-compatible. */,
+        "skipLibCheck": true,
+        "paths": {
+            "./models/*": ["models/*"]
+        }
+    },
+    "include": ["*.ts"],
+    "exclude": ["node_modules"]
+}
