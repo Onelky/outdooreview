@@ -1,11 +1,14 @@
+import * as process from 'process'
 import express, { Express, NextFunction, Request, Response } from 'express'
 import { Campground } from './models/campground'
 import { wrapAsync } from './lib/utils'
-import { campgroundSchema, validateSchemaData } from './schemas'
-import * as process from 'process'
+import { Review } from './models/review'
+import { validateCampground } from './schemas/campground'
+import ExpressError from './lib/classes'
+import { validateReview } from './schemas/review'
 
+const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
-const ExpressError = require('./lib/classes')
 require('dotenv').config()
 
 mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true })
@@ -18,11 +21,7 @@ db.once('open', () => {
 
 const app: Express = express()
 
-const validateCampground = (req: Request, res: Response, next: NextFunction) => {
-    const { error } = validateSchemaData(req.body, campgroundSchema)
-    if (error) throw new ExpressError(error, 400)
-    else next()
-}
+app.use(bodyParser.json())
 
 app.get('/', (req: Request, res: Response) => {
     res.send('Hi!')
@@ -71,11 +70,33 @@ app.delete(
     })
 )
 
+app.get(
+    '/campgrounds/:id/reviews',
+    wrapAsync(async (req: Request, res: Response) => {
+        const campground = await Campground.findById(req.params.id)
+        res.send(campground)
+    })
+)
+
+app.post(
+    '/campgrounds/:id/reviews',
+    validateReview,
+    wrapAsync(async (req: Request, res: Response) => {
+        const campground = await Campground.findById(req.params.id)
+        const review = new Review(req.body.review)
+        campground.reviews.push(review)
+
+        await review.save()
+        await campground.save()
+        res.send(campground.reviews)
+    })
+)
+
 app.all('*', (req, res, next) => {
     next(new ExpressError('Endpoint not found', 404))
 })
 
-app.use((error: typeof ExpressError, req: Request, res: Response, next: NextFunction) => {
+app.use((error: ExpressError, req: Request, res: Response, next: NextFunction) => {
     const { statusCode = 500, message = 'Something went wrong' } = error
     res.status(statusCode).send(message)
 })
