@@ -1,10 +1,10 @@
 import { z } from 'zod'
-import { campgroundSchema } from './campground'
 
 type SchemaError = {
     error: string
 }
 
+// todo: improve error that it's returned
 function validateSchemaData(inputs: unknown, schema: z.Schema): SchemaError {
     const result = schema.safeParse(inputs)
     if (!result.success) {
@@ -14,4 +14,4 @@ function validateSchemaData(inputs: unknown, schema: z.Schema): SchemaError {
     return { error: '' }
 }
 
-export { validateSchemaData, campgroundSchema }
+export { validateSchemaData }
