@@ -1,4 +1,4 @@
-import { Review } from './review'
+import Review from './review'
 
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
@@ -19,4 +19,4 @@ CampgroundSchema.post('findOneAndDelete', async doc => {
         })
     }
 })
-export const Campground = mongoose.model('Campground', CampgroundSchema)
+export default mongoose.model('Campground', CampgroundSchema)
