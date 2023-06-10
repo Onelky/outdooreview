@@ -92,6 +92,16 @@ app.post(
     })
 )
 
+app.delete(
+    '/campgrounds/:id/reviews/:reviewId',
+    wrapAsync(async (req: Request, res: Response) => {
+        const { id, reviewId } = req.params
+        await Review.findByIdAndDelete(reviewId)
+        const campground = await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewId } })
+        res.send(campground)
+    })
+)
+
 app.all('*', (req, res, next) => {
     next(new ExpressError('Endpoint not found', 404))
 })
