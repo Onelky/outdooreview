@@ -1,8 +1,14 @@
+import { Schema, model, Document } from 'mongoose'
 import Review from './review'
-import mongoose from 'mongoose'
 
-const Schema = mongoose.Schema
-
+export interface ICampground extends Document {
+    email: string
+    title: string
+    price: number
+    description: string
+    location: string
+    reviews: [{ type: Schema.Types.ObjectId; ref: 'Review' }]
+}
 const CampgroundSchema = new Schema({
     title: String,
     price: Number,
@@ -19,4 +25,4 @@ CampgroundSchema.post('findOneAndDelete', async doc => {
         })
     }
 })
-export default mongoose.model('Campground', CampgroundSchema)
+export default model<ICampground>('Campground', CampgroundSchema)

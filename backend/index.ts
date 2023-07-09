@@ -4,9 +4,13 @@ import bodyParser from 'body-parser'
 import mongoose, { ConnectOptions } from 'mongoose'
 import dotenv from 'dotenv'
 import session from 'express-session'
+import passport from 'passport'
+import { Strategy } from 'passport-local'
 import ExpressError from './lib/classes'
 import campgroundRoutes from './routes/campgrounds'
 import reviewsRoutes from './routes/reviews'
+import usersRoutes from './routes/users'
+import User from './models/user'
 
 const sessionConfig = {
     secret: 'anAwfulSecret',
@@ -33,8 +37,15 @@ const app: Express = express()
 app.use(bodyParser.json())
 app.use(session(sessionConfig))
 
-app.use('/campgrounds', campgroundRoutes)
-app.use('/campgrounds/:id/reviews', reviewsRoutes)
+app.use(passport.initialize())
+app.use(passport.session())
+passport.use(new Strategy(User.authenticate()))
+passport.serializeUser(User.serializeUser())
+passport.deserializeUser(User.deserializeUser())
+
+app.use('/api/campgrounds', campgroundRoutes)
+app.use('/api/campgrounds/:id/reviews', reviewsRoutes)
+app.use('/api/users', usersRoutes)
 
 app.all('*', (req, res, next) => {
     next(new ExpressError('Endpoint not found', 404))
