@@ -21,10 +21,10 @@ router.post(
     wrapAsync(async (req: Request, res: Response) => {
         const campground = await Campground.findById(req.params.id)
         const review = new Review(req.body.review)
-        campground.reviews.push(review)
+        campground?.reviews.push(review)
         await review.save()
-        await campground.save()
-        res.send(campground.reviews)
+        await campground?.save()
+        res.send(campground?.reviews)
     })
 )
 
