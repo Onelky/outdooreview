@@ -1,7 +1,8 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import Campground from '../models/campground'
 import { validateCampground } from '../schemas/campground'
 import { wrapAsync } from '../lib/utils'
+import { isLoggedIn } from '../lib/middlewares'
 
 const express = require('express')
 const router = express.Router()
@@ -16,6 +17,7 @@ router.get(
 
 router.post(
     '/',
+    isLoggedIn,
     validateCampground,
     wrapAsync(async (req: Request, res: Response) => {
         const campground = new Campground(req.body)
@@ -34,6 +36,7 @@ router.get(
 
 router.put(
     '/:id',
+    isLoggedIn,
     validateCampground,
     wrapAsync(async (req: Request, res: Response) => {
         const campground = await Campground.findByIdAndUpdate(req.params.id, req.body)
@@ -43,6 +46,7 @@ router.put(
 
 router.delete(
     '/:id',
+    isLoggedIn,
     wrapAsync(async (req: Request, res: Response) => {
         const campground = await Campground.findByIdAndDelete(req.params.id)
         res.send(campground)
