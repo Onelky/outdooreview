@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import passport from 'passport'
 import Campground from '../models/campground'
 import User from '../models/user'
@@ -11,13 +11,15 @@ const router = express.Router({ mergeParams: true })
 router.post(
     '/register',
     validateUser,
-    wrapAsync(async (req: Request, res: Response) => {
+    wrapAsync(async (req, res, next) => {
         try {
             const { email, username, password } = req.body
             const user = new User({ email, username })
             const newUser = await User.register(user, password)
-            console.log('newUser', newUser)
-            res.send(newUser).status(200)
+            req.login(newUser, err => {
+                if (err && next) return next(err)
+                res.send(newUser).status(200)
+            })
         } catch (err) {
             // @ts-ignore
             res.send({ error: err.message }).status(409)
@@ -36,4 +38,13 @@ router.post(
         }
     })
 )
+
+router.get('/logout', (req: Request, res: Response, next: NextFunction) => {
+    req.logout(function (err) {
+        if (err) {
+            return next(err)
+        }
+        res.send({ message: 'Logged out' })
+    })
+})
 export default router

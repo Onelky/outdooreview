@@ -3,6 +3,7 @@ import Campground from '../models/campground'
 import Review from '../models/review'
 import { validateReview } from '../schemas/review'
 import { wrapAsync } from '../lib/utils'
+import { isLoggedIn } from '../lib/middlewares'
 
 const express = require('express')
 const router = express.Router({ mergeParams: true })
@@ -17,6 +18,7 @@ router.get(
 
 router.post(
     '/',
+    isLoggedIn,
     validateReview,
     wrapAsync(async (req: Request, res: Response) => {
         const campground = await Campground.findById(req.params.id)
@@ -30,6 +32,7 @@ router.post(
 
 router.delete(
     '/:reviewId',
+    isLoggedIn,
     wrapAsync(async (req: Request, res: Response) => {
         const { id, reviewId } = req.params
         await Review.findByIdAndDelete(reviewId)
