@@ -24,7 +24,7 @@ const sessionConfig = {
 }
 
 dotenv.config()
-mongoose.connect(process.env.DATABASE_URL as string, { useNewUrlParser: true } as ConnectOptions)
+if (process.env.NODE_ENV === 'DEV') mongoose.connect(process.env.DATABASE_URL as string, { useNewUrlParser: true } as ConnectOptions)
 
 const db = mongoose.connection
 db.on('error', console.error.bind(console, 'connection error:'))
@@ -59,3 +59,5 @@ app.use((error: ExpressError, req: Request, res: Response, next: NextFunction) =
 app.listen(5000, () => {
     console.log('Serving on port 5000')
 })
+
+export default app

@@ -1,0 +1,4 @@
+**/*.js
+/__tests__
+/coverage
+/seeds

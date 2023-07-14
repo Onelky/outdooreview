@@ -1,5 +1,5 @@
 import { Schema, model, Document } from 'mongoose'
-import Review from './review'
+import Review, { IReview } from './review'
 
 export interface ICampground extends Document {
     email: string
@@ -7,7 +7,7 @@ export interface ICampground extends Document {
     price: number
     description: string
     location: string
-    reviews: [{ type: Schema.Types.ObjectId; ref: 'Review' }]
+    reviews: IReview[]
 }
 const CampgroundSchema = new Schema({
     title: String,
