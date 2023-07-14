@@ -51,7 +51,7 @@ app.all('*', (req, res, next) => {
     next(new ExpressError('Endpoint not found', 404))
 })
 
-app.use((error: ExpressError, req: Request, res: Response) => {
+app.use((error: ExpressError, req: Request, res: Response, next) => {
     const { statusCode = 500, message = 'Something went wrong' } = error
     res.status(statusCode).send(message)
 })

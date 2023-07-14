@@ -27,10 +27,10 @@ router.post(
 
 router.post(
     '/login',
-    passport.authenticate('local', { failureMessage: true, failWithError: true }),
+    passport.authenticate('local', { failureMessage: 'Invalid username or password' }),
     wrapAsync(async (req: Request, res: Response) => {
         try {
-            return res.send('Signed up!').status(200)
+            return res.send(req.user).status(200)
         } catch (err) {
             return res.send({ error: 'Incorrect username or password' }).status(404)
         }

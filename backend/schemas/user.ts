@@ -6,8 +6,8 @@ import ExpressError from '../lib/classes'
 export const userSchema = z
     .object({
         email: z.string({ required_error: 'Email is required', invalid_type_error: 'Email must be a string' }).nonempty(),
-        username: z.string({ required_error: 'Username is required', invalid_type_error: 'Username must be a string' }).nonempty(),
-        password: z.string({ required_error: 'Password is required', invalid_type_error: 'Password must be a string' }).nonempty()
+        username: z.string({ required_error: 'Username is required' }).nonempty(),
+        password: z.string({ required_error: 'Password is required' }).nonempty()
     })
     .required()
 

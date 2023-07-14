@@ -5,16 +5,13 @@ import User, { IUser } from '../models/user'
 const request = require('supertest')
 
 describe('User Registration', () => {
-    let mockUser
-    let mockUserWithPassword
+    const mockUser = { username: 'onelky', email: 'onelky@email.com' }
+    const mockUserWithPassword = { ...mockUser, password: '123' }
 
     beforeAll(async () => {
         await db.connect()
     })
-    beforeEach(() => {
-        mockUser = { username: 'onelky', email: 'onelky@email.com' }
-        mockUserWithPassword = { ...mockUser, password: '123' }
-    })
+
     afterEach(async () => {
         await db.clearDatabase()
     })
@@ -36,8 +33,15 @@ describe('User Registration', () => {
             })
     })
 
-    it('returns Bad Request 400 when user data is incomplete', done => {
+    it('returns Bad Request 400 when password is null', done => {
         request(app).post('/api/users/register').send(mockUser).expect(400, done)
+    })
+
+    it('returns Bad Request 400 when username is null', done => {
+        request(app)
+            .post('/api/users/register')
+            .send({ ...mockUserWithPassword, username: null })
+            .expect(400, done)
     })
 
     it('inserts a valid user into users collection', async () => {
@@ -51,12 +55,24 @@ describe('User Registration', () => {
         expect(newUser.username).toBe(mockUser.username)
     })
 
-    it('returns error when username is not defined', async () => {
+    it('returns MissingUsernameError error when username is not defined', async () => {
         try {
             const user: IUser = new User({ email: 'randomUsername' })
             const newUser = await User.register(user, mockUserWithPassword.password)
         } catch (error) {
             expect(error).toBeDefined()
+            expect(error.name).toBe('MissingUsernameError')
+        }
+    })
+
+    it('returns UserExistsError when username already exists', async () => {
+        try {
+            const user: IUser = new User(mockUser)
+            const registeredUser = await User.register(user, mockUserWithPassword.password)
+            const newUser = await User.register(user, 'differentPassword')
+        } catch (error) {
+            expect(error).toBeDefined()
+            expect(error.name).toBe('UserExistsError')
         }
     })
 })
