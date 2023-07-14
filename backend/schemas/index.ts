@@ -1,17 +1,16 @@
 import { z } from 'zod'
 
-type SchemaError = {
-    error: string
+export type SchemaError = {
+    errors?: { [p: string]: string[] | undefined; [p: number]: string[] | undefined; [p: symbol]: string[] | undefined }
 }
 
-// todo: improve error that it's returned
 function validateSchemaData(inputs: unknown, schema: z.Schema): SchemaError {
     const result = schema.safeParse(inputs)
     if (!result.success) {
-        console.log('format', result.error.format())
-        return { error: 'Invalid campground!' }
+        const { fieldErrors } = result.error.flatten()
+        return { errors: fieldErrors }
     }
-    return { error: '' }
+    return {}
 }
 
 export { validateSchemaData }

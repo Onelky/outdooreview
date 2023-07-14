@@ -52,8 +52,8 @@ app.all('*', (req, res, next) => {
 })
 
 app.use((error: ExpressError, req: Request, res: Response, next) => {
-    const { statusCode = 500, message = 'Something went wrong' } = error
-    res.status(statusCode).send(message)
+    const { statusCode = 500, message = 'Something went wrong', errors } = error
+    res.status(statusCode).send(errors ?? message)
 })
 
 export default app

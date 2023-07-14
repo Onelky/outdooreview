@@ -42,7 +42,7 @@ router.get('/logout', (req: Request, res: Response, next: NextFunction) => {
         if (err) {
             return next(err)
         }
-        res.send({ message: 'Logged out' })
+        return res.status(204)
     })
 })
 export default router

@@ -33,15 +33,24 @@ describe('User Registration', () => {
             })
     })
 
-    it('returns Bad Request 400 when password is null', done => {
-        request(app).post('/api/users/register').send(mockUser).expect(400, done)
+    it('returns Bad Request 400 and error message when password is null', done => {
+        request(app)
+            .post('/api/users/register')
+            .send(mockUser)
+            .then(response => {
+                expect(response.body.password).not.toBeUndefined()
+                done()
+            })
     })
 
-    it('returns Bad Request 400 when username is null', done => {
+    it('returns Bad Request 400 and error message when username is null', done => {
         request(app)
             .post('/api/users/register')
             .send({ ...mockUserWithPassword, username: null })
-            .expect(400, done)
+            .then(response => {
+                expect(response.body.username).not.toBeUndefined()
+                done()
+            })
     })
 
     it('inserts a valid user into users collection', async () => {

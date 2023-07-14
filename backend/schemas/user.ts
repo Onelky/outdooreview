@@ -12,8 +12,8 @@ export const userSchema = z
     .required()
 
 const validateUser = (req: Request, res: Response, next: NextFunction) => {
-    const { error } = validateSchemaData(req.body, userSchema)
-    if (error) throw new ExpressError(error, 400)
+    const { errors } = validateSchemaData(req.body, userSchema)
+    if (errors) throw new ExpressError('', 400, errors)
     else next()
 }
 

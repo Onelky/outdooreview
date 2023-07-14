@@ -19,7 +19,7 @@ export const campgroundSchema = z.object({
 })
 
 export const validateCampground = (req: Request, res: Response, next: NextFunction) => {
-    const { error } = validateSchemaData(req.body, campgroundSchema)
-    if (error) throw new ExpressError(error, 400)
+    const { errors } = validateSchemaData(req.body, campgroundSchema)
+    if (errors) throw new ExpressError('', 400, errors)
     else next()
 }
