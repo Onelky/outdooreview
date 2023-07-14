@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import passport from 'passport'
+import pick from 'lodash/pick'
 import Campground from '../models/campground'
 import User from '../models/user'
 import validateUser from '../schemas/user'
@@ -18,7 +19,7 @@ router.post(
             const newUser = await User.register(user, password)
             req.login(newUser, err => {
                 if (err && next) return next(err)
-                res.send(newUser).status(200)
+                res.send(pick(newUser, ['_id', 'username', 'email'])).status(200)
             })
         } catch (err) {
             // @ts-ignore
