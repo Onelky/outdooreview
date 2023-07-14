@@ -1,5 +1,5 @@
 import * as process from 'process'
-import express, { Express, NextFunction, Request, Response } from 'express'
+import express, { Express, Request, Response } from 'express'
 import bodyParser from 'body-parser'
 import mongoose, { ConnectOptions } from 'mongoose'
 import dotenv from 'dotenv'
@@ -51,7 +51,7 @@ app.all('*', (req, res, next) => {
     next(new ExpressError('Endpoint not found', 404))
 })
 
-app.use((error: ExpressError, req: Request, res: Response, next: NextFunction) => {
+app.use((error: ExpressError, req: Request, res: Response) => {
     const { statusCode = 500, message = 'Something went wrong' } = error
     res.status(statusCode).send(message)
 })

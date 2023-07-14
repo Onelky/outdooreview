@@ -1,7 +1,7 @@
 import { Schema, model, Document } from 'mongoose'
 
 export interface IReview extends Document {
-    rating: number,
+    rating: number
     body: string
 }
 const ReviewSchema = new Schema({

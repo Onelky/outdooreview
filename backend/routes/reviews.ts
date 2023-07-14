@@ -1,11 +1,10 @@
-import { Request, Response } from 'express'
+import express, { Request, Response } from 'express'
 import Campground from '../models/campground'
 import Review from '../models/review'
 import { validateReview } from '../schemas/review'
 import { wrapAsync } from '../lib/utils'
 import { isLoggedIn } from '../lib/middlewares'
 
-const express = require('express')
 const router = express.Router({ mergeParams: true })
 
 router.get(

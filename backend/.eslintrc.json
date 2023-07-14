@@ -17,6 +17,7 @@
     "jest": true
   },
   "rules": {
-    "prettier/prettier": "warn"
+    "prettier/prettier": "warn",
+    "@typescript-eslint/no-namespace": "off"
   }
 }

@@ -1,10 +1,9 @@
-import { NextFunction, Request, Response } from 'express'
+import express, { Request, Response } from 'express'
 import Campground from '../models/campground'
 import { validateCampground } from '../schemas/campground'
 import { wrapAsync } from '../lib/utils'
 import { isLoggedIn } from '../lib/middlewares'
 
-const express = require('express')
 const router = express.Router()
 
 router.get(

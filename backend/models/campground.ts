@@ -17,7 +17,6 @@ const CampgroundSchema = new Schema({
     reviews: [{ type: Schema.Types.ObjectId, ref: 'Review' }]
 })
 
-// @ts-ignore
 CampgroundSchema.post('findOneAndDelete', async doc => {
     if (doc) {
         await Review.deleteMany({

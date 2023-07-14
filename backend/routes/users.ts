@@ -1,12 +1,10 @@
-import { NextFunction, Request, Response } from 'express'
+import express, { NextFunction, Request, Response } from 'express'
 import passport from 'passport'
 import pick from 'lodash/pick'
-import Campground from '../models/campground'
 import User from '../models/user'
 import validateUser from '../schemas/user'
 import { wrapAsync } from '../lib/utils'
 
-const express = require('express')
 const router = express.Router({ mergeParams: true })
 
 router.post(
@@ -22,7 +20,6 @@ router.post(
                 res.send(pick(newUser, ['_id', 'username', 'email'])).status(200)
             })
         } catch (err) {
-            // @ts-ignore
             res.send({ error: err.message }).status(409)
         }
     })
