@@ -18,8 +18,15 @@ export const campgroundSchema = z.object({
     location: z.string({ required_error: 'Location is required' }).nonempty()
 })
 
+export const campgroundUpdateSchema = z.object({
+    title: z.string().optional(),
+    price: z.number().positive().gte(0).optional(),
+    description: z.string().optional(),
+    location: z.string().optional()
+})
+
 export const validateCampground = (req: Request, res: Response, next: NextFunction) => {
-    const { errors } = validateSchemaData(req.body, campgroundSchema)
+    const { errors } = validateSchemaData(req.body, req.method === 'post' ? campgroundSchema : campgroundUpdateSchema)
     if (errors) throw new ExpressError('', 400, errors)
     else next()
 }

@@ -1,14 +1,16 @@
 import { Schema, model, Document } from 'mongoose'
 import Review, { IReview } from './review'
 
-export interface ICampground extends Document {
-    email: string
+export interface ICampground {
     title: string
     price: number
     description: string
     location: string
     reviews: IReview[]
 }
+
+export interface CampgroundDocument extends ICampground, Document {}
+
 const CampgroundSchema = new Schema({
     title: String,
     price: Number,
@@ -24,4 +26,4 @@ CampgroundSchema.post('findOneAndDelete', async doc => {
         })
     }
 })
-export default model<ICampground>('Campground', CampgroundSchema)
+export default model<CampgroundDocument>('Campground', CampgroundSchema)

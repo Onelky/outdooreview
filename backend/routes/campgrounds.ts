@@ -38,7 +38,7 @@ router.put(
     isLoggedIn,
     validateCampground,
     wrapAsync(async (req: Request, res: Response) => {
-        const campground = await Campground.findByIdAndUpdate(req.params.id, req.body)
+        const campground = await Campground.findByIdAndUpdate(req.params.id, req.body, { returnDocument: 'after' })
         res.send(campground)
     })
 )
