@@ -1,11 +1,12 @@
-const mongoose = require('mongoose')
+import * as process from 'process'
+import mongoose from 'mongoose'
+import Campground from '../models/campground'
+import { ConnectOptions } from 'mongoose'
 const { places, descriptors } = require('./seedHelper')
-import { Campground } from '../models/campground'
 const cities = require('./cities')
 
-mongoose.connect('mongodb+srv://admin:08012829@cluster0.g0oge.mongodb.net/outdoreview?retryWrites=true&w=majority', {
-    useNewUrlParser: true
-})
+mongoose.connect(process.env.DATABASE_URL as string, { useNewUrlParser: true } as ConnectOptions)
+
 const db = mongoose.connection
 db.on('error', console.error.bind(console, 'connection error:'))
 db.once('open', () => {
@@ -28,5 +29,5 @@ const seedDB = async () => {
 }
 
 seedDB().then(() => {
-  mongoose.connection.close()
+    mongoose.connection.close()
 })
