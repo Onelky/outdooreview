@@ -11,7 +11,7 @@ router.get(
     '/',
     wrapAsync(async (req: Request, res: Response) => {
         const campground = await Campground.findById(req.params.id)
-        res.send(campground)
+        res.send(campground).status(200)
     })
 )
 
@@ -21,11 +21,11 @@ router.post(
     validateReview,
     wrapAsync(async (req: Request, res: Response) => {
         const campground = await Campground.findById(req.params.id)
-        const review = new Review(req.body.review)
+        const review = new Review(req.body)
         campground?.reviews.push(review)
         await review.save()
         await campground?.save()
-        res.send(campground?.reviews)
+        res.send(review).status(200)
     })
 )
 
@@ -36,7 +36,7 @@ router.delete(
         const { id, reviewId } = req.params
         await Review.findByIdAndDelete(reviewId)
         const campground = await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewId } })
-        res.send(campground)
+        res.send(campground).status(200)
     })
 )
 

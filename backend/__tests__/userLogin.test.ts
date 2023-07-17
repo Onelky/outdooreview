@@ -60,4 +60,11 @@ describe('User Login', () => {
             .send({ ...mockUser, username: 'wrongUsername' })
             .expect(401, done)
     })
+
+    it('should log out and return 204 code', async () => {
+        const loginRequest = await postRequest(path).send(mockUser)
+        const cookie = loginRequest.headers['set-cookie']
+        const logoutReq = await request(app).get('/api/users/logout').set('cookie', cookie)
+        expect(logoutReq.status).toBe(204)
+    })
 })

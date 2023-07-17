@@ -14,7 +14,7 @@ export const reviewSchema = z
     .required()
 
 export const validateReview = (req: Request, res: Response, next: NextFunction) => {
-    const { errors } = validateSchemaData(req.body.review ?? req.body, reviewSchema)
+    const { errors } = validateSchemaData(req.body, reviewSchema)
     if (errors) throw new ExpressError('', 400, errors)
     else next()
 }
