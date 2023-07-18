@@ -1,7 +1,4 @@
 import { z } from 'zod'
-import { NextFunction, Request, Response } from 'express'
-import { validateSchemaData } from './index'
-import ExpressError from '../lib/classes'
 
 const customErrorMap: z.ZodErrorMap = (issue, ctx) => {
     if (issue.code === z.ZodIssueCode.invalid_type) return { message: 'Invalid data' }
@@ -24,9 +21,3 @@ export const campgroundUpdateSchema = z.object({
     description: z.string().optional(),
     location: z.string().optional()
 })
-
-export const validateCampground = (req: Request, res: Response, next: NextFunction) => {
-    const { errors } = validateSchemaData(req.body, req.method === 'post' ? campgroundSchema : campgroundUpdateSchema)
-    if (errors) throw new ExpressError('', 400, errors)
-    else next()
-}

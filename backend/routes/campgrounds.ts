@@ -1,8 +1,8 @@
 import express, { Request, Response } from 'express'
 import Campground from '../models/campground'
-import { validateCampground } from '../schemas/campground'
+import { validateCampground, isCampgroundAuthor } from '../middlewares/campground'
 import { wrapAsync } from '../lib/utils'
-import { isLoggedIn } from '../lib/middlewares'
+import { isLoggedIn } from '../middlewares'
 
 const router = express.Router()
 
@@ -19,7 +19,7 @@ router.post(
     isLoggedIn,
     validateCampground,
     wrapAsync(async (req: Request, res: Response) => {
-        const campground = new Campground(req.body)
+        const campground = new Campground({ ...req.body, author: req.user?._id })
         await campground.save()
         res.send(campground)
     })
@@ -28,7 +28,7 @@ router.post(
 router.get(
     '/:id',
     wrapAsync(async (req: Request, res: Response) => {
-        const campground = await Campground.findById(req.params.id)
+        const campground = await Campground.findById(req.params.id).populate('reviews').populate('author')
         res.send(campground)
     })
 )
@@ -37,15 +37,16 @@ router.put(
     '/:id',
     isLoggedIn,
     validateCampground,
+    isCampgroundAuthor,
     wrapAsync(async (req: Request, res: Response) => {
-        const campground = await Campground.findByIdAndUpdate(req.params.id, req.body, { returnDocument: 'after' })
-        res.send(campground)
+        res.send(await Campground.findByIdAndUpdate(req.params.id, req.body, { returnDocument: 'after' }))
     })
 )
 
 router.delete(
     '/:id',
     isLoggedIn,
+    isCampgroundAuthor,
     wrapAsync(async (req: Request, res: Response) => {
         const campground = await Campground.findByIdAndDelete(req.params.id)
         res.send(campground)

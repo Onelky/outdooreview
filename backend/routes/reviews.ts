@@ -1,9 +1,9 @@
 import express, { Request, Response } from 'express'
 import Campground from '../models/campground'
 import Review from '../models/review'
-import { validateReview } from '../schemas/review'
+import { validateReview } from '../middlewares/reviews'
 import { wrapAsync } from '../lib/utils'
-import { isLoggedIn } from '../lib/middlewares'
+import { isLoggedIn } from '../middlewares'
 
 const router = express.Router({ mergeParams: true })
 

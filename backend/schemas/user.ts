@@ -1,7 +1,4 @@
 import { z } from 'zod'
-import { NextFunction, Request, Response } from 'express'
-import { validateSchemaData } from './index'
-import ExpressError from '../lib/classes'
 
 export const userSchema = z
     .object({
@@ -11,10 +8,4 @@ export const userSchema = z
     })
     .required()
 
-const validateUser = (req: Request, res: Response, next: NextFunction) => {
-    const { errors } = validateSchemaData(req.body, userSchema)
-    if (errors) throw new ExpressError('', 400, errors)
-    else next()
-}
-
-export default validateUser
+export default userSchema
