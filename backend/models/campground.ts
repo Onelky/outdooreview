@@ -1,4 +1,4 @@
-import { Schema, model, Document } from 'mongoose'
+import { Schema, model, Document, Types } from 'mongoose'
 import Review, { IReview } from './review'
 
 export interface ICampground {
@@ -6,6 +6,7 @@ export interface ICampground {
     price: number
     description: string
     location: string
+    author?: Types.ObjectId
     reviews: IReview[]
 }
 
@@ -16,6 +17,7 @@ const CampgroundSchema = new Schema({
     price: Number,
     description: String,
     location: String,
+    author: { type: Schema.Types.ObjectId, ref: 'User' },
     reviews: [{ type: Schema.Types.ObjectId, ref: 'Review' }]
 })
 

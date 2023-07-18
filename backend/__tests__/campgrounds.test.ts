@@ -7,8 +7,8 @@ const request = require('supertest')
 
 describe('Campgrounds', () => {
     const basePath = '/api/campgrounds/'
-    let cookie
-    const validCampground: ICampground = { title: 'Campground', price: 200, description: 'Description', location: 'Location 1', reviews: [] }
+    let cookie, validUserId
+    let validCampground: ICampground
 
     beforeAll(async () => {
         await db.connect()
@@ -20,7 +20,9 @@ describe('Campgrounds', () => {
             username: 'test',
             password: 'test'
         })
+        validUserId = res.body._id
         cookie = res.headers['set-cookie']
+        validCampground = { title: 'Campground', price: 200, description: 'Description', location: 'Location 1', reviews: [] }
     })
 
     afterEach(async () => {
@@ -41,34 +43,69 @@ describe('Campgrounds', () => {
             .then(response => {
                 const { status, body } = response
                 expect(status).toBe(200)
-                expect(body).toMatchObject({ _id: expect.stringMatching(MONGODB_ID_PATTERN), ...validCampground })
+                expect(body).toMatchObject({ _id: expect.stringMatching(MONGODB_ID_PATTERN), author: expect.stringMatching(MONGODB_ID_PATTERN), ...validCampground })
                 done()
             })
     })
 
-    it('returns a Campground', async () => {
-        const newCampground = new Campground(validCampground)
+    it('returns a Campground with its author', async () => {
+        const newCampground = new Campground({ ...validCampground, author: validUserId })
         await newCampground.save()
         const id = newCampground._id.toString()
         const result = await request(app).get(basePath + id)
         expect(result.status).toBe(200)
         expect(result.body).toBeDefined()
         expect(result.body._id).toEqual(id)
+        expect(result.body.author).not.toBeUndefined()
     })
 
-    it('updates a Campground', async () => {
-        const savedCampground = new Campground(validCampground)
+    it('updates Campground when using creator credentials', async () => {
+        const savedCampground = new Campground({ ...validCampground, author: validUserId })
+        await savedCampground.save()
+        const id = savedCampground._id.toString()
+
+        const result = await request(app)
+            .put(basePath + id)
+            .set('cookie', cookie)
+            .send({ title: 'Updated title' })
+
+        expect(result.status).toBe(200)
+        expect(result.body.title).toBe('Updated title')
+        expect(result.body._id).toBe(id)
+    })
+
+    it('returns Unauthorized message when using invalid credentials to update a Campground', async () => {
+        await User.register(new User({ username: 'unauthorizedUser', email: 'unauthorizedUser@test.com' }), 'test')
+        const res = await request(app).post('/api/users/login').send({
+            username: 'unauthorizedUser',
+            password: 'test'
+        })
+        const unauthorizedUser = res.headers['set-cookie']
+
+        const savedCampground = new Campground({ ...validCampground, authorId: validUserId })
         await savedCampground.save()
         const id = savedCampground._id.toString()
 
         const result = await request(app)
             .put(basePath + id)
             .send({ title: 'Updated title' })
-            .set('cookie', cookie)
+            .set('cookie', unauthorizedUser)
 
-        expect(result.status).toBe(200)
-        expect(result.body.title).toBe('Updated title')
-        expect(result.body._id).toBe(id)
+        expect(result.status).toBe(404)
+        expect(result.body.message).toBe('Unauthorized')
+    })
+
+    it('returns Unauthorized message when updating a Campground without being logged in', async () => {
+        const savedCampground = new Campground({ ...validCampground, authorId: validUserId })
+        await savedCampground.save()
+        const id = savedCampground._id.toString()
+
+        const result = await request(app)
+            .put(basePath + id)
+            .send({ title: 'Updated title' })
+
+        expect(result.status).toBe(404)
+        expect(result.body.message).toBe('Must be logged in')
     })
 
     it('deletes a Campground', async () => {
