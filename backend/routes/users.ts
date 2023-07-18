@@ -2,7 +2,7 @@ import express, { NextFunction, Request, Response } from 'express'
 import passport from 'passport'
 import pick from 'lodash/pick'
 import User from '../models/user'
-import validateUser from '../schemas/user'
+import { validateUser } from '../middlewares/users'
 import { wrapAsync } from '../lib/utils'
 
 const router = express.Router({ mergeParams: true })
