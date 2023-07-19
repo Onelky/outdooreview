@@ -28,7 +28,9 @@ router.post(
 router.get(
     '/:id',
     wrapAsync(async (req: Request, res: Response) => {
-        const campground = await Campground.findById(req.params.id).populate('reviews').populate('author')
+        const campground = await Campground.findById(req.params.id)
+            .populate({ path: 'reviews', populate: { path: 'author' } })
+            .populate('author')
         res.send(campground)
     })
 )
