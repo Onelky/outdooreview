@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express'
 import Campground from '../models/campground'
 import Review from '../models/review'
-import { validateReview } from '../middlewares/reviews'
+import { isReviewAuthor, validateReview } from '../middlewares/reviews'
 import { wrapAsync } from '../lib/utils'
 import { isLoggedIn } from '../middlewares'
 
@@ -21,7 +21,7 @@ router.post(
     validateReview,
     wrapAsync(async (req: Request, res: Response) => {
         const campground = await Campground.findById(req.params.id)
-        const review = new Review(req.body)
+        const review = new Review({ ...req.body, author: req.user?._id })
         campground?.reviews.push(review)
         await review.save()
         await campground?.save()
@@ -29,9 +29,21 @@ router.post(
     })
 )
 
+router.put(
+    '/:reviewId',
+    isLoggedIn,
+    validateReview,
+    isReviewAuthor,
+    wrapAsync(async (req: Request, res: Response) => {
+        const review = await Review.findByIdAndUpdate(req.params.reviewId, req.body, { returnDocument: 'after' })
+        res.status(200).send(review)
+    })
+)
+
 router.delete(
     '/:reviewId',
     isLoggedIn,
+    isReviewAuthor,
     wrapAsync(async (req: Request, res: Response) => {
         const { id, reviewId } = req.params
         await Review.findByIdAndDelete(reviewId)
