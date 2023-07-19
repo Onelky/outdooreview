@@ -6,12 +6,8 @@ import { createReview, deleteReview, updateReview } from '../controllers/reviews
 
 const router = express.Router({ mergeParams: true })
 
-router.get('/', findCampground)
+router.route('/').get(findCampground).post(isLoggedIn, validateReview, createReview)
 
-router.post('/', isLoggedIn, validateReview, createReview)
-
-router.put('/:reviewId', isLoggedIn, validateReview, isReviewAuthor, updateReview)
-
-router.delete('/:reviewId', isLoggedIn, isReviewAuthor, deleteReview)
+router.route('/:reviewId').put(isLoggedIn, validateReview, isReviewAuthor, updateReview).delete(isLoggedIn, isReviewAuthor, deleteReview)
 
 export default router

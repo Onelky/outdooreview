@@ -5,14 +5,12 @@ import { createCampground, deleteCampground, findAllCampgrounds, findCampground,
 
 const router = express.Router()
 
-router.get('/', findAllCampgrounds)
+router.route('/').get(findAllCampgrounds).post(isLoggedIn, validateCampground, createCampground)
 
-router.post('/', isLoggedIn, validateCampground, createCampground)
-
-router.get('/:id', findCampground)
-
-router.put('/:id', isLoggedIn, validateCampground, isCampgroundAuthor, updateCampground)
-
-router.delete('/:id', isLoggedIn, isCampgroundAuthor, deleteCampground)
+router
+    .route('/:id')
+    .get(findCampground)
+    .put(isLoggedIn, validateCampground, isCampgroundAuthor, updateCampground)
+    .delete(isLoggedIn, isCampgroundAuthor, deleteCampground)
 
 export default router
