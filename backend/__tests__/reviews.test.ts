@@ -102,7 +102,7 @@ describe('Reviews CRUD', () => {
 
         const { status, body } = await request(app)
             .delete(basePath + id)
-            .set('cookie', cookie)
+            .set('cookie', unauthorizedUser)
 
         const deletedReview = await Review.findOne({ _id: id })
         expect(deletedReview).not.toBeNull()
