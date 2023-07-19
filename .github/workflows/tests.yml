@@ -10,8 +10,8 @@ on:
     branches: [ "main" ]
 
 defaults:
-    run:
-      working-directory: backend
+  run:
+    working-directory: dart_project
 jobs:
   build:
 
