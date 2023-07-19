@@ -1,48 +1,13 @@
-import express, { NextFunction, Request, Response } from 'express'
+import express from 'express'
 import passport from 'passport'
-import pick from 'lodash/pick'
-import User from '../models/user'
 import { validateUser } from '../middlewares/users'
-import { wrapAsync } from '../lib/utils'
+import { login, logout, register } from '../controllers/users'
 
 const router = express.Router({ mergeParams: true })
 
-router.post(
-    '/register',
-    validateUser,
-    wrapAsync(async (req, res, next) => {
-        try {
-            const { email, username, password } = req.body
-            const user = new User({ email, username })
-            const newUser = await User.register(user, password)
-            req.login(newUser, err => {
-                if (err && next) return next(err)
-                res.send(pick(newUser, ['_id', 'username', 'email'])).status(200)
-            })
-        } catch (err) {
-            res.send({ error: err.message }).status(409)
-        }
-    })
-)
+router.post('/register', validateUser, register)
 
-router.post(
-    '/login',
-    passport.authenticate('local', { failureMessage: 'Invalid username or password' }),
-    wrapAsync(async (req: Request, res: Response) => {
-        try {
-            return res.send(req.user).status(200)
-        } catch (err) {
-            return res.send({ error: 'Incorrect username or password' }).status(404)
-        }
-    })
-)
+router.post('/login', passport.authenticate('local', { failureMessage: 'Invalid username or password' }), login)
 
-router.get('/logout', (req: Request, res: Response, next: NextFunction) => {
-    req.logout(function (err) {
-        if (err) {
-            return next(err)
-        }
-        return res.status(204).send({ message: 'Logged out' })
-    })
-})
+router.get('/logout', logout)
 export default router

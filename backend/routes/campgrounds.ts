@@ -1,58 +1,18 @@
-import express, { Request, Response } from 'express'
-import Campground from '../models/campground'
+import express from 'express'
 import { validateCampground, isCampgroundAuthor } from '../middlewares/campground'
-import { wrapAsync } from '../lib/utils'
 import { isLoggedIn } from '../middlewares'
+import { createCampground, deleteCampground, findAllCampgrounds, findCampground, updateCampground } from '../controllers/campgrounds'
 
 const router = express.Router()
 
-router.get(
-    '/',
-    wrapAsync(async (req: Request, res: Response) => {
-        const campgrounds = await Campground.find({})
-        res.send(campgrounds)
-    })
-)
+router.get('/', findAllCampgrounds)
 
-router.post(
-    '/',
-    isLoggedIn,
-    validateCampground,
-    wrapAsync(async (req: Request, res: Response) => {
-        const campground = new Campground({ ...req.body, author: req.user?._id })
-        await campground.save()
-        res.send(campground)
-    })
-)
+router.post('/', isLoggedIn, validateCampground, createCampground)
 
-router.get(
-    '/:id',
-    wrapAsync(async (req: Request, res: Response) => {
-        const campground = await Campground.findById(req.params.id)
-            .populate({ path: 'reviews', populate: { path: 'author' } })
-            .populate('author')
-        res.send(campground)
-    })
-)
+router.get('/:id', findCampground)
 
-router.put(
-    '/:id',
-    isLoggedIn,
-    validateCampground,
-    isCampgroundAuthor,
-    wrapAsync(async (req: Request, res: Response) => {
-        res.send(await Campground.findByIdAndUpdate(req.params.id, req.body, { returnDocument: 'after' }))
-    })
-)
+router.put('/:id', isLoggedIn, validateCampground, isCampgroundAuthor, updateCampground)
 
-router.delete(
-    '/:id',
-    isLoggedIn,
-    isCampgroundAuthor,
-    wrapAsync(async (req: Request, res: Response) => {
-        const campground = await Campground.findByIdAndDelete(req.params.id)
-        res.send(campground)
-    })
-)
+router.delete('/:id', isLoggedIn, isCampgroundAuthor, deleteCampground)
 
 export default router
