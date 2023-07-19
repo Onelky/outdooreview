@@ -1,22 +1,38 @@
 import app from '../app'
 import * as db from './__db__'
 import User, { IUser } from '../models/user'
-import Campground, { CampgroundDocument, ICampground } from '../models/campground'
+import Campground, { CampgroundDocument } from '../models/campground'
 import { MONGODB_ID_PATTERN } from '../lib/constants'
 import Review, { IReview } from '../models/review'
+
 const request = require('supertest')
+
+const validReview: IReview = { body: 'Test review', rating: 5 }
+
+const createReview = async (basePath: string, cookie: string): Promise<string> => {
+    const createdReview = await request(app).post(basePath).set('cookie', cookie).send(validReview)
+    return createdReview.body._id
+}
+
+const getUnauthorizedCookie = async (): Promise<string> => {
+    await User.register(new User({ username: 'unauthorizedUser', email: 'unauthorizedUser@test.com' }), 'test')
+    const res = await request(app).post('/api/users/login').send({
+        username: 'unauthorizedUser',
+        password: 'test'
+    })
+    return res.headers['set-cookie']
+}
 
 describe('Reviews CRUD', () => {
     let basePath = '/api/campgrounds/'
     let cookie
     let campground: CampgroundDocument
-    const validReview: IReview = { body: 'Test review', rating: 5 }
 
     beforeAll(async () => {
         await db.connect()
         campground = new Campground({ title: 'Campground', price: 200, description: 'Description', location: 'Location 1', reviews: [] })
         await campground.save()
-        basePath += campground._id + '/reviews'
+        basePath += campground._id + '/reviews/'
     })
     beforeEach(async () => {
         const user: IUser = new User({ username: 'test', email: 'test@test.com' })
@@ -41,45 +57,57 @@ describe('Reviews CRUD', () => {
     it('creates a Review', async () => {
         const res = await request(app).post(basePath).send(validReview).set('cookie', cookie)
         expect(res.status).toBe(200)
-        expect(res.body).toMatchObject({ _id: expect.stringMatching(MONGODB_ID_PATTERN), ...validReview })
+        expect(res.body).toMatchObject({ _id: expect.stringMatching(MONGODB_ID_PATTERN), author: expect.stringMatching(MONGODB_ID_PATTERN), ...validReview })
     })
 
-    // it('returns a Campground', async () => {
-    //     const newCampground = new Campground(validCampground)
-    //     await newCampground.save()
-    //     const id = newCampground._id.toString()
-    //     const result = await request(app).get(basePath + id)
-    //     expect(result.status).toBe(200)
-    //     expect(result.body).toBeDefined()
-    //     expect(result.body._id).toEqual(id)
-    // })
-    //
-    // it('updates a Campground', async () => {
-    //     const savedCampground = new Campground(validCampground)
-    //     await savedCampground.save()
-    //     const id = savedCampground._id.toString()
-    //
-    //     const result = await request(app)
-    //         .put(basePath + id)
-    //         .send({ title: 'Updated title' })
-    //         .set('cookie', cookie)
-    //
-    //     expect(result.status).toBe(200)
-    //     expect(result.body.title).toBe('Updated title')
-    //     expect(result.body._id).toBe(id)
-    // })
-    //
-    it('deletes a Review', async () => {
-        const createdReview = await request(app).post(basePath).send(validReview).set('cookie', cookie)
-        const id = createdReview.body._id
-        expect(id).toMatch(MONGODB_ID_PATTERN)
+    it('updates Review with creator credentials', async () => {
+        const id = await createReview(basePath, cookie)
+
+        const { status, body } = await request(app)
+            .put(basePath + id)
+            .set('cookie', cookie)
+            .send({ body: 'Updated body' })
+
+        expect(status).toBe(200)
+        expect(body.body).toBe('Updated body')
+        expect(body._id).toBe(id)
+    })
+
+    it('returns Unauthorized message when updating a Review with invalid credentials', async () => {
+        const id = await createReview(basePath, cookie)
+        const unauthorizedUser = await getUnauthorizedCookie()
+
+        const { status, body } = await request(app)
+            .put(basePath + id)
+            .set('cookie', unauthorizedUser)
+            .send({ body: 'Updated body' })
+
+        expect(status).toBe(403)
+        expect(body.message).toBe('Unauthorized')
+    })
+    it('deletes a Review when using creator credentials', async () => {
+        const id = await createReview(basePath, cookie)
 
         const res = await request(app)
-            .delete(basePath + '/' + id)
+            .delete(basePath + id)
             .set('cookie', cookie)
 
         const deletedReview = await Review.findOne({ _id: id })
         expect(deletedReview).toBeNull()
         expect(res.status).toBe(200)
+    })
+    it('returns Unauthorized message when deleting a Review with invalid credentials', async () => {
+        const id = await createReview(basePath, cookie)
+        const unauthorizedUser = await getUnauthorizedCookie()
+
+        const { status, body } = await request(app)
+            .delete(basePath + id)
+            .set('cookie', cookie)
+
+        const deletedReview = await Review.findOne({ _id: id })
+        expect(deletedReview).not.toBeNull()
+
+        expect(status).toBe(403)
+        expect(body.message).toBe('Unauthorized')
     })
 })
