@@ -9,9 +9,9 @@ export interface IReview {
 export interface ReviewDocument extends IReview, Document {}
 
 const ReviewSchema = new Schema({
-    rating: Number,
-    body: String,
-    author: { type: Schema.Types.ObjectId, ref: 'User' }
+    rating: { type: Number, required: true, min: 0, max: 5 },
+    body: { type: String, required: true },
+    author: { type: Schema.Types.ObjectId, ref: 'User', required: true }
 })
 
 export default model<ReviewDocument>('Review', ReviewSchema)

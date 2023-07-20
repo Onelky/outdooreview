@@ -1,16 +1,28 @@
 import { model, Schema, PassportLocalDocument } from 'mongoose'
 import passportLocalMongoose from 'passport-local-mongoose'
+import { isEmail } from 'validator'
 
-export interface IUser extends PassportLocalDocument {
+export interface IUser {
     email: string
     username: string
     password: string
+}
+
+export interface UserDocument extends IUser, PassportLocalDocument {
     hash: string
     salt: string
 }
 
-const UserSchema = new Schema<IUser>({
-    email: { type: String, required: true, unique: true },
+const UserSchema = new Schema<UserDocument>({
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        validate: {
+            validator: isEmail,
+            message: 'Invalid email'
+        }
+    },
     username: { type: String, required: true, unique: true },
     password: { type: String },
     hash: { type: String },
@@ -19,10 +31,10 @@ const UserSchema = new Schema<IUser>({
 
 declare global {
     namespace Express {
-        interface User extends IUser {}
+        interface User extends UserDocument {}
     }
 }
 
 UserSchema.plugin(passportLocalMongoose, { errorMessages: { UserExistsError: 'Username is already registered' } })
 
-export default model<IUser>('User', UserSchema)
+export default model<UserDocument>('User', UserSchema)

@@ -13,15 +13,15 @@ export interface ICampground {
 export interface CampgroundDocument extends ICampground, Document {}
 
 const CampgroundSchema = new Schema({
-    title: String,
-    price: Number,
+    title: { type: String, required: true },
+    price: { type: Number, required: true },
     description: String,
-    location: String,
-    author: { type: Schema.Types.ObjectId, ref: 'User' },
+    location: { type: String, required: true },
+    author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     reviews: [{ type: Schema.Types.ObjectId, ref: 'Review' }]
 })
 
-CampgroundSchema.post('findOneAndDelete', async doc => {
+CampgroundSchema.post('findOneAndDelete', async (doc) => {
     if (doc) {
         await Review.deleteMany({
             _id: { $in: doc.reviews }
