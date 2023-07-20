@@ -1,14 +1,13 @@
 import { NextFunction, Request, Response } from 'express'
-import pick from 'lodash/pick'
 import { wrapAsync } from '../lib/utils'
 import * as service from '../services/users'
 
 export const register = wrapAsync(async (req, res, next) => {
     try {
         const newUser = await service.createUser(req.body)
-        req.login(newUser, err => {
+        req.login(newUser, (err) => {
             if (err && next) return next(err)
-            res.send(pick(newUser, ['_id', 'username', 'email'])).status(200)
+            res.send(newUser).status(200)
         })
     } catch (err) {
         res.send({ error: err.message }).status(409)

@@ -15,7 +15,7 @@ export const findCampground = async (id: string): Promise<CampgroundDocument> =>
 }
 
 export const updateCampground = async (id: string, data: Partial<ICampground>): Promise<CampgroundDocument> => {
-    return (await Campground.findByIdAndUpdate(id, data, { returnDocument: 'after' })) as CampgroundDocument
+    return (await Campground.findByIdAndUpdate(id, data, { runValidators: true, returnDocument: 'after' })) as CampgroundDocument
 }
 export const deleteCampground = async (id: string): Promise<CampgroundDocument> => {
     return (await Campground.findByIdAndDelete(id)) as CampgroundDocument

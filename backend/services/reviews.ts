@@ -11,7 +11,7 @@ export const createReview = async (campgroundId: string, data: IReview, author: 
 }
 
 export const updateReview = async (id: string, data: Partial<IReview>): Promise<ReviewDocument> => {
-    return (await Review.findByIdAndUpdate(id, data, { returnDocument: 'after' })) as ReviewDocument
+    return (await Review.findByIdAndUpdate(id, data, { returnDocument: 'after', runValidators: true })) as ReviewDocument
 }
 export const deleteReview = async (id: string, reviewId: string): Promise<CampgroundDocument> => {
     await Review.findByIdAndDelete(reviewId)
