@@ -13,9 +13,25 @@ export interface ICampground {
     author?: Types.ObjectId
     reviews: IReview[]
     images?: Image[]
+    deleteImages?: string[]
 }
 
 export interface CampgroundDocument extends ICampground, Document {}
+
+const ImageSchema = new Schema(
+    { url: String, filename: String },
+    {
+        toJSON: { virtuals: true },
+        virtuals: {
+            // creates a virtual property with a 300px image
+            thumbnail: {
+                get() {
+                    return this?.url?.replace('/upload', '/upload/w_300')
+                }
+            }
+        }
+    }
+)
 
 const CampgroundSchema = new Schema({
     title: { type: String, required: true },
@@ -24,7 +40,7 @@ const CampgroundSchema = new Schema({
     location: { type: String, required: true },
     author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     reviews: [{ type: Schema.Types.ObjectId, ref: 'Review' }],
-    images: [{ url: String, filename: String }]
+    images: [ImageSchema]
 })
 
 CampgroundSchema.post('findOneAndDelete', async (doc) => {

@@ -20,3 +20,5 @@ export const storage = new CloudinaryStorage({
         // public_id: (req, file) => 'computed-filename-using-request'
     }
 } as Options)
+
+export default cloudinary

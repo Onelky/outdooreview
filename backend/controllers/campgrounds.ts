@@ -11,10 +11,20 @@ export const createCampground = wrapAsync(async (req: Request, res: Response) =>
         author: req.user?._id,
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        ...(files.length && { images: files.map((file) => ({ url: file.path, filename: file.filename })) })
+        ...(files.length && { images: files.map(file => ({ url: file.path, filename: file.filename })) })
     }
     res.send(await service.createCampground(campground, req.user?._id)).status(201)
 })
 export const findCampground = wrapAsync(async (req: Request, res: Response) => res.send(await service.findCampground(req.params.id)).status(200))
-export const updateCampground = wrapAsync(async (req: Request, res: Response) => res.send(await service.updateCampground(req.params.id, req.body)).status(200))
+export const updateCampground = wrapAsync(async (req: Request, res: Response) => {
+    const { files = [], body } = req
+    const campground = {
+        ...body,
+        ...(body.price && { price: Number(body.price) }),
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        ...(files.length && { images: files.map(file => ({ url: file.path, filename: file.filename })) })
+    }
+    res.send(await service.updateCampground(req.params.id, campground)).status(200)
+})
 export const deleteCampground = wrapAsync(async (req: Request, res: Response) => res.send(await service.deleteCampground(req.params.id)).status(200))

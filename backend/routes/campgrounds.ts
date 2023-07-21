@@ -15,7 +15,7 @@ router.route('/').get(findAllCampgrounds).post(isLoggedIn, upload.array('images'
 router
     .route('/:id')
     .get(findCampground)
-    .put(isLoggedIn, validateCampground, isCampgroundAuthor, updateCampground)
+    .put(isLoggedIn, isCampgroundAuthor, upload.array('images'), validateCampground, updateCampground)
     .delete(isLoggedIn, isCampgroundAuthor, deleteCampground)
 
 export default router
