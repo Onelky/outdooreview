@@ -1,6 +1,10 @@
 import { Schema, model, Document, Types } from 'mongoose'
 import Review, { IReview } from './review'
 
+export interface Image {
+    url: string
+    filename: string
+}
 export interface ICampground {
     title: string
     price: number
@@ -8,6 +12,7 @@ export interface ICampground {
     location: string
     author?: Types.ObjectId
     reviews: IReview[]
+    images?: Image[]
 }
 
 export interface CampgroundDocument extends ICampground, Document {}
@@ -18,7 +23,8 @@ const CampgroundSchema = new Schema({
     description: String,
     location: { type: String, required: true },
     author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    reviews: [{ type: Schema.Types.ObjectId, ref: 'Review' }]
+    reviews: [{ type: Schema.Types.ObjectId, ref: 'Review' }],
+    images: [{ url: String, filename: String }]
 })
 
 CampgroundSchema.post('findOneAndDelete', async (doc) => {
