@@ -31,11 +31,18 @@ const seedDB = async () => {
         const newCamp = new Campground({
             author: user._id,
             location: `${city.city}, ${city.state}`,
-            title: `${sample(descriptors)} ${sample(places)}`
+            title: `${sample(descriptors)} ${sample(places)}`,
+            price: 0,
+            images: [
+                {
+                    url: 'https://res.cloudinary.com/dfxqeiuzx/image/upload/v1689961751/outdooreview/default-campground.jpg',
+                    filename: 'outdooreview/default-campground'
+                }
+            ]
         })
         await newCamp.save()
     }
-    console.log('Finished creation of Campgrounds...')
+    console.log('Finished creation of Campgrounds!')
 }
 
 seedDB().then(() => {

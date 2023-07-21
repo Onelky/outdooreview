@@ -23,8 +23,8 @@ const sessionConfig = {
     }
 }
 
-dotenv.config()
-if (process.env.NODE_ENV === 'DEV') mongoose.connect(process.env.DATABASE_URL as string, { useNewUrlParser: true } as ConnectOptions)
+if (process.env.NODE_ENV !== 'PROD') dotenv.config()
+if (process.env.NODE_ENV !== 'TEST') mongoose.connect(process.env.DATABASE_URL as string, { useNewUrlParser: true } as ConnectOptions)
 
 const db = mongoose.connection
 db.on('error', console.error.bind(console, 'connection error:'))
