@@ -3,7 +3,7 @@ import * as db from '../__db__'
 import { Error } from 'mongoose'
 import Campground, { CampgroundDocument } from '../../models/campground'
 import User, { UserDocument } from '../../models/user'
-import { validUser } from '../constants'
+import { validCampground, validUser } from '../utils/constants'
 
 describe('Campgrounds Service', () => {
     beforeAll(async () => {
@@ -29,10 +29,7 @@ describe('Campgrounds Service', () => {
             await author.save()
         })
         it('should insert a new doc in Campground collection', async () => {
-            const newCampground = await service.createCampground(
-                { title: 'Title', description: 'Description', location: 'location', price: 200, reviews: [] },
-                author._id
-            )
+            const newCampground = await service.createCampground(validCampground, author._id)
             const found = await Campground.findById(newCampground._id)
             expect(found).not.toBeUndefined()
             expect(found?._id).toEqual(newCampground?._id)
@@ -55,7 +52,7 @@ describe('Campgrounds Service', () => {
             await author.save()
         })
         beforeEach(async () => {
-            savedCampground = new Campground({ title: 'Title', description: 'Description', location: 'location', price: 200, reviews: [], author: author._id })
+            savedCampground = new Campground({ ...validCampground, author: author._id })
             await savedCampground.save()
         })
         it('should return data of Campground', async () => {

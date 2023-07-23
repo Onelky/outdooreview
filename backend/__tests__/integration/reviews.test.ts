@@ -4,7 +4,7 @@ import User, { UserDocument } from '../../models/user'
 import Campground, { CampgroundDocument } from '../../models/campground'
 import { MONGODB_ID_PATTERN } from '../../lib/constants'
 import Review, { IReview } from '../../models/review'
-import { validUser } from '../constants'
+import { validUser } from '../utils/constants'
 import { before } from 'node:test'
 
 const request = require('supertest')
