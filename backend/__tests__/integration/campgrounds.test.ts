@@ -1,12 +1,12 @@
+import omit from 'lodash/omit'
 import app from '../../app'
 import * as db from '../__db__'
 import User, { UserDocument } from '../../models/user'
-import Campground, { ICampground } from '../../models/campground'
+import Campground from '../../models/campground'
 import { MONGODB_ID_PATTERN } from '../../lib/constants'
+import { validCampground } from '../utils/constants'
 
 const request = require('supertest')
-
-const validCampground: ICampground = { title: 'Campground', price: 200, description: 'Description', location: 'Location 1', reviews: [] }
 
 const getUnauthorizedCookie = async (): Promise<string> => {
     await User.register(new User({ username: 'unauthorizedUser', email: 'unauthorizedUser@test.com' }), 'test')
@@ -50,17 +50,19 @@ describe('Campgrounds routes', () => {
 
     describe('Success', () => {
         it('should create a Campground', (done) => {
+            const campgroundData = omit(validCampground, 'geometry')
             request(app)
                 .post(basePath)
-                .send(validCampground)
+                .send(campgroundData)
                 .set('cookie', cookie)
                 .then((response) => {
                     const { status, body } = response
                     expect(status).toBe(200)
+                    expect(body.geometry).not.toBeNull()
                     expect(body).toMatchObject({
                         _id: expect.stringMatching(MONGODB_ID_PATTERN),
                         author: expect.stringMatching(MONGODB_ID_PATTERN),
-                        ...validCampground
+                        ...campgroundData
                     })
                     done()
                 })
@@ -74,7 +76,7 @@ describe('Campgrounds routes', () => {
             expect(result.body._id).toEqual(id)
             expect(result.body.author).not.toBeUndefined()
         })
-        it('should update Campground when using creator credentials', async () => {
+        it('should update Campground', async () => {
             const id = await createCampground(validUserId)
 
             const result = await request(app)

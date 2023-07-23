@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "start:backend": "nodemon index.ts",
+        "start": "nodemon index.ts",
         "test": "jest",
         "test:watch": "jest --watch --runInBand --detectOpenHandles --watchAll",
         "test:coverage": "jest --coverage",
@@ -14,6 +14,7 @@
     "author": "Onelky",
     "license": "ISC",
     "dependencies": {
+        "@mapbox/mapbox-sdk": "0.15.2",
         "@types/multer": "1.4.7",
         "cloudinary": "1.38.0",
         "dotenv": "16.1.4",

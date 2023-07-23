@@ -7,5 +7,5 @@ module.exports = {
     testEnvironment: 'node',
     setupFiles: ['dotenv/config'],
     coverageDirectory: '<rootDir>/coverage/',
-    modulePathIgnorePatterns: ['__db__', 'constants']
+    modulePathIgnorePatterns: ['__db__', 'utils']
 }

@@ -38,7 +38,11 @@ const seedDB = async () => {
                     url: 'https://res.cloudinary.com/dfxqeiuzx/image/upload/v1689961751/outdooreview/default-campground.jpg',
                     filename: 'outdooreview/default-campground'
                 }
-            ]
+            ],
+            geometry: {
+                type: 'Point',
+                coordinates: [city.longitude, city.latitude]
+            }
         })
         await newCamp.save()
     }
