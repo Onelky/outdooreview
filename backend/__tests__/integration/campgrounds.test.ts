@@ -79,13 +79,11 @@ describe('Campgrounds routes', () => {
         it('should update Campground', async () => {
             const id = await createCampground(validUserId)
 
-            console.log('id', id)
             const result = await request(app)
                 .put(basePath + id)
                 .set('cookie', cookie)
                 .send({ title: 'Updated title' })
 
-            // console.log('result', result)
             expect(result.status).toBe(200)
             expect(result.body.title).toBe('Updated title')
             expect(result.body._id).toBe(id)
