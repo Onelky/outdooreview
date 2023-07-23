@@ -117,5 +117,5 @@ npm test
   npm run test:watch
   ```
 
-License
+## License
 This project is licensed under the MIT License.
