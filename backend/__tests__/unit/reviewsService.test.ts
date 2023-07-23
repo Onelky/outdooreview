@@ -4,7 +4,7 @@ import * as service from '../../services/reviews'
 import Review, { ReviewDocument } from '../../models/review'
 import User, { UserDocument } from '../../models/user'
 import Campground, { CampgroundDocument } from '../../models/campground'
-import { validUser } from '../constants'
+import { validCampground, validUser } from '../utils/constants'
 
 describe('Reviews Service', () => {
     let campground: CampgroundDocument
@@ -16,7 +16,7 @@ describe('Reviews Service', () => {
     beforeEach(async () => {
         author = new User(validUser)
         await author.save()
-        campground = new Campground({ title: 'Campground', price: 200, description: 'Description', location: 'Location 1', reviews: [], author: author._id })
+        campground = new Campground({ ...validCampground, author: author._id })
         await campground.save()
     })
     afterEach(async () => {
@@ -45,12 +45,6 @@ describe('Reviews Service', () => {
     describe('Get, Update and Delete Review', () => {
         let savedReview: ReviewDocument
 
-        // beforeAll(async () => {
-        //     savedReview = new Review({ body: 'Title', rating: 4, author: author._id })
-        //     await savedReview.save()
-        //     campground.reviews.push(savedReview._id)
-        //     await campground.save()
-        // })
         beforeEach(async () => {
             savedReview = new Review({ body: 'Title', rating: 4, author: author._id })
             await savedReview.save()
