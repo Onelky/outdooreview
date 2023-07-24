@@ -35,6 +35,8 @@ jobs:
         CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
         CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
         MAPBOX_TOKEN: ${{ secrets.MAPBOX_TOKEN }}
+        SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+        CLOUDINARY_URL: ${{ secrets.CLOUDINARY_URL }}
     - run: npm ci
     - run: npm run build --if-present
     - run: npm run test
