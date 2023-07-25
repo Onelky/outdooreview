@@ -37,6 +37,9 @@ jobs:
         MAPBOX_TOKEN: ${{ secrets.MAPBOX_TOKEN }}
         SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
         CLOUDINARY_URL: ${{ secrets.CLOUDINARY_URL }}
+        GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+        GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+        GOOGLE_CALLBACK_URL: ${{ secrets.GOOGLE_CALLBACK_URL }}
     - run: npm ci
     - run: npm run build --if-present
     - run: npm run test
