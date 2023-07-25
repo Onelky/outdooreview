@@ -42,4 +42,4 @@ jobs:
         GOOGLE_CALLBACK_URL: ${{ secrets.GOOGLE_CALLBACK_URL }}
     - run: npm ci
     - run: npm run build --if-present
-    - run: npm run test
+    - run: MAPBOX_TOKEN=${{ env.MAPBOX_TOKEN }} npm run test
