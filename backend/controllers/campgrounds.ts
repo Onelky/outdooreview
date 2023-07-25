@@ -1,10 +1,8 @@
 import geocoding from '@mapbox/mapbox-sdk/services/geocoding'
-import dotenv from 'dotenv'
 import { wrapAsync } from '../lib/utils'
 import { Request, Response } from 'express'
 import * as service from '../services/campground'
 
-dotenv.config()
 const geocoder = geocoding({ accessToken: process.env.MAPBOX_TOKEN })
 
 const formatCampground = (campground, geoData, files) => {
