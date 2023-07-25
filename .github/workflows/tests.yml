@@ -22,6 +22,7 @@ jobs:
         node-version: [18.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     environment: test
+  
     steps:
     - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
@@ -40,6 +41,9 @@ jobs:
         GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
         GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
         GOOGLE_CALLBACK_URL: ${{ secrets.GOOGLE_CALLBACK_URL }}
+        SECRETS_CONTEXT: ${{ toJson(secrets) }}
     - run: npm ci
     - run: npm run build --if-present
-    - run: MAPBOX_TOKEN=${{ env.MAPBOX_TOKEN }} npm run test
+    - run: echo "$SECRETS_CONTEXT"
+    - run: npm test
+
