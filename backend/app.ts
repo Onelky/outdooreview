@@ -7,12 +7,14 @@ import session from 'express-session'
 import passport from 'passport'
 import mongoSanitize from 'express-mongo-sanitize'
 import helmet from 'helmet'
-import { Strategy } from 'passport-local'
+import { Strategy as LocalStrategy } from 'passport-local'
+import { Strategy as GoogleStrategy } from 'passport-google-oidc'
 import ExpressError from './lib/classes'
 import campgroundRoutes from './routes/campgrounds'
 import reviewsRoutes from './routes/reviews'
 import usersRoutes from './routes/users'
-import User from './models/user'
+import User, { AuthMethods } from './models/user'
+import { createUser, findUser } from './services/users'
 
 dotenv.config()
 
@@ -56,7 +58,33 @@ app.use(
         }
     })
 )
-passport.use(new Strategy(User.authenticate()))
+passport.use(
+    new GoogleStrategy(
+        {
+            clientID: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            callbackURL: process.env.GOOGLE_CALLBACK_URL
+        },
+        async (issuer, profile, done) => {
+            try {
+                const existingUser = await findUser(profile.id, true)
+                if (existingUser) {
+                    return done(null, existingUser)
+                }
+                const newUser = await createUser({
+                    method: AuthMethods.google,
+                    username: profile.id,
+                    email: profile.emails[0].value
+                })
+
+                return done(null, newUser)
+            } catch (error) {
+                return done(error, false)
+            }
+        }
+    )
+)
+passport.use(new LocalStrategy(User.authenticate()))
 passport.serializeUser(User.serializeUser())
 passport.deserializeUser(User.deserializeUser())
 

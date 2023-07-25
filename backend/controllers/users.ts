@@ -4,7 +4,7 @@ import * as service from '../services/users'
 
 export const register = wrapAsync(async (req, res, next) => {
     try {
-        const newUser = await service.createUser(req.body)
+        const newUser = await service.registerUser(req.body)
         req.login(newUser, (err) => {
             if (err && next) return next(err)
             res.send(newUser).status(200)

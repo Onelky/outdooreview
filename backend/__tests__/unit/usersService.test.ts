@@ -18,7 +18,7 @@ describe('Users Service', () => {
         const validUserWithPassword = { ...validUser, password: 'password' }
 
         it('should insert a new doc in User collection', async () => {
-            const newUser = await service.createUser(validUserWithPassword)
+            const newUser = await service.registerUser(validUserWithPassword)
             const found = await User.findById(newUser._id)
             expect(found).not.toBeUndefined()
             expect(found?._id).toEqual(newUser?._id)
@@ -28,19 +28,19 @@ describe('Users Service', () => {
             it('should throw MissingUsernameError when username is not given', async () => {
                 await expect(
                     // @ts-expect-error
-                    async () => await service.createUser({ email: 'email', password: 'passw0rd' })
+                    async () => await service.registerUser({ email: 'email', password: 'passw0rd' })
                 ).rejects.toMatchObject({ name: 'MissingUsernameError' })
             })
 
             it('should throw ValidationError when email is invalid', async () => {
-                await expect(async () => await service.createUser({ username: 'username', email: 'invalidEmail', password: 'passw0rd' })).rejects.toThrowError(
-                    Error.ValidationError
-                )
+                await expect(
+                    async () => await service.registerUser({ username: 'username', email: 'invalidEmail', password: 'passw0rd' })
+                ).rejects.toThrowError(Error.ValidationError)
             })
             it('should return UserExistsError when username already exists', async () => {
                 await expect(async () => {
-                    await service.createUser(validUserWithPassword)
-                    await service.createUser({ ...validUserWithPassword, password: 'differentPassword' })
+                    await service.registerUser(validUserWithPassword)
+                    await service.registerUser({ ...validUserWithPassword, password: 'differentPassword' })
                 }).rejects.toMatchObject({ name: 'UserExistsError' })
             })
         })
