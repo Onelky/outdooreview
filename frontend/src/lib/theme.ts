@@ -1,37 +1,32 @@
-import {
-  createTheme,
-  Theme,
-  alpha,
-  responsiveFontSizes,
-} from "@mui/material/styles";
+import { createTheme, Theme, alpha, responsiveFontSizes } from '@mui/material/styles'
 
 interface CustomColors {
-  white: string;
-  aquamarine: string;
-  golden: string;
-  grey: string;
+  white: string
+  aquamarine: string
+  golden: string
+  grey: string
 }
 
 const customColors: CustomColors = {
-  white: "#FFFCF6",
-  aquamarine: "#41EAD4",
-  golden: "#D4BB3B",
-  grey: "#A4A2A2",
-};
+  white: '#FFFCF6',
+  aquamarine: '#41EAD4',
+  golden: '#D4BB3B',
+  grey: '#A4A2A2'
+}
 
 const defaultColors = {
-  primary: "#022420",
-  secondary: "#00AA96",
-  error: "#B03E3E",
-};
+  primary: '#022420',
+  secondary: '#00AA96',
+  error: '#B03E3E'
+}
 
-declare module "@mui/material/styles" {
+declare module '@mui/material/styles' {
   interface Theme {
-    customColors: CustomColors;
+    customColors: CustomColors
   }
   // allow configuration using `createTheme`
   interface ThemeOptions {
-    customColors: CustomColors;
+    customColors: CustomColors
   }
 }
 let theme: Theme = createTheme({
@@ -40,79 +35,71 @@ let theme: Theme = createTheme({
   palette: {
     primary: {
       main: defaultColors.primary,
-      light: alpha(defaultColors.primary, 0.8),
+      light: alpha(defaultColors.primary, 0.8)
     },
-    secondary: { main: defaultColors.secondary },
+    secondary: { main: defaultColors.secondary }
   },
   typography: {
     h1: {
       letterSpacing: -2,
-      fontSize: 12,
-      lineHeight: 9,
-      "@media (max-width:900px)": {
-        fontSize: 8.6,
-      },
+      fontSize: 120,
+      fontWeight: 700,
+      '@media (max-width:900px)': {
+        fontSize: 86
+      }
     },
     h2: {
       letterSpacing: 1.5,
-      fontSize: 6,
+      fontSize: 60,
       lineHeight: 7.4,
-      "@media (max-width:1200px)": {
-        fontSize: 5.6,
+      '@media (max-width:1200px)': {
+        fontSize: 56
       },
-      "@media (max-width:900px)": {
-        fontSize: 3,
+      '@media (max-width:900px)': {
+        fontSize: 30
       },
-      "@media (max-width:600px)": {
-        fontSize: 2.6,
-      },
+      '@media (max-width:600px)': {
+        fontSize: 26
+      }
     },
     h3: {
       letterSpacing: 1.5,
-      fontSize: 2,
-      "@media (max-width:1536px)": {
-        fontSize: 1.8,
+      fontSize: 20,
+      '@media (max-width:1536px)': {
+        fontSize: 18
       },
-      "@media (max-width:900px)": {
-        fontSize: 1.6,
+      '@media (max-width:900px)': {
+        fontSize: 16
       },
-      "@media (max-width:600px)": {
-        fontSize: 1.4,
-      },
+      '@media (max-width:600px)': {
+        fontSize: 14
+      }
     },
     body1: {
-      letterSpacing: "1.5%",
-      fontSize: 1.8,
-      lineHeight: "140",
-      "@media (max-width:1200px)": {
-        fontSize: 1.6,
+      letterSpacing: '1.5px',
+      fontSize: 18,
+      lineHeight: 1.5,
+      '@media (max-width:1200px)': {
+        fontSize: 16
       },
-      "@media (max-width:600px)": {
-        fontSize: 1.3,
-      },
+      '@media (max-width:600px)': {
+        fontSize: 13
+      }
     },
     button: {
-      letterSpacing: "15%",
-      fontSize: 1.6,
-      "@media (max-width:900px)": {
-        fontSize: 1.4,
+      letterSpacing: '15%',
+      fontSize: 16,
+      '@media (max-width:900px)': {
+        fontSize: 14
       },
-      "@media (max-width:600px)": {
-        fontSize: 1.2,
-      },
+      '@media (max-width:600px)': {
+        fontSize: 12
+      }
     },
-    fontFamily: [
-      "Roboto",
-      '"Helvetica Neue"',
-      "Arial",
-      "sans-serif",
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"',
-    ].join(","),
-  },
-});
+    fontFamily: ['Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif', '"Apple Color Emoji"', '"Segoe UI Emoji"', '"Segoe UI Symbol"'].join(',')
+  }
+})
 
-theme = responsiveFontSizes(theme);
+theme = responsiveFontSizes(theme)
 
-export default theme;
+export default theme
