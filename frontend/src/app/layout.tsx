@@ -1,5 +1,4 @@
 'use client'
-import { Roboto } from 'next/font/google'
 import { ReactNode, useState } from 'react'
 import theme from '@/lib/theme'
 import { ThemeProvider } from '@mui/material/styles'
@@ -8,8 +7,6 @@ import { useServerInsertedHTML } from 'next/navigation'
 import { CacheProvider } from '@emotion/react'
 import { CssBaseline } from '@mui/material'
 import { MainLayout } from '@/components/Layout'
-
-const roboto = Roboto({ subsets: ['latin'], weight: ['300', '400', '500', '700'] })
 
 type ThemeRegistryType = {
   options: Options
@@ -70,7 +67,7 @@ function ThemeRegistry(props: ThemeRegistryType) {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body className={roboto.className}>
+      <body>
         <ThemeRegistry options={{ key: 'mui-theme' }}>
           <MainLayout>{children}</MainLayout>
         </ThemeRegistry>

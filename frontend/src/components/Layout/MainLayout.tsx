@@ -22,7 +22,7 @@ type NavRouteType = ButtonProps & {
   isSelected?: boolean
 }
 
-const NavItem = styled(Button)<NavRouteType>(({ theme, isSelected }) => ({
+const NavItem = styled(Button, { shouldForwardProp: (propName) => propName !== 'isSelected' })<NavRouteType>(({ theme, isSelected }) => ({
   color: isSelected ? theme.customColors.aquamarine : theme.customColors.white,
   fontSize: 16,
   fontWeight: 700,
