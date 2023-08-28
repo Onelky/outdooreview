@@ -42,10 +42,10 @@ let theme: Theme = createTheme({
   typography: {
     h1: {
       letterSpacing: -2,
-      fontSize: 120,
       fontWeight: 700,
-      '@media (max-width:900px)': {
-        fontSize: 86
+      fontSize: 120,
+      '@media screen and (max-width:900px)': {
+        fontSize: '64px !important'
       }
     },
     h2: {
